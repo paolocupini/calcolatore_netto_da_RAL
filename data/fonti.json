@@ -10,7 +10,7 @@
     "affidabilita": "secondaria",
     "dataVerifica": "2026-09-11",
     "validoPerAnnoImposta": 2026,
-    "note": "La Legge di Bilancio 2026 ha ridotto l'aliquota del secondo scaglione dal 35% al 33%. Struttura a 3 scaglioni gia' resa strutturale dal 2025. Il link punta al riepilogo della Legge di Bilancio: per il testo dell'art. 11 TUIR verificare su Normattiva prima di un uso in produzione."
+    "note": "La Legge di Bilancio 2026 ha ridotto l'aliquota del secondo scaglione dal 35% al 33%. Struttura a 3 scaglioni già resa strutturale dal 2025. Il link punta al riepilogo della Legge di Bilancio: per il testo dell'art. 11 TUIR verificare su Normattiva prima di un uso in produzione."
   },
 
   "detrazione-art13-tuir": {
@@ -43,7 +43,7 @@
     "affidabilita": "primaria",
     "dataVerifica": "2026-09-11",
     "validoPerAnnoImposta": 2026,
-    "note": "ATTENZIONE: gli scaglioni regionali sono ancora i 4 pre-riforma (0/15k/28k/50k), non i 3 nazionali. La L. 199/2025 ha prorogato al 2028 la facolta' delle Regioni di mantenere il vecchio schema."
+    "note": "ATTENZIONE: gli scaglioni regionali sono ancora i 4 pre-riforma (0/15k/28k/50k), non i 3 nazionali. La L. 199/2025 ha prorogato al 2028 la facoltà delle Regioni di mantenere il vecchio schema."
   },
 
   "addizionale-comunale-milano": {
@@ -54,7 +54,7 @@
     "affidabilita": "primaria",
     "dataVerifica": "2026-09-11",
     "validoPerAnnoImposta": 2026,
-    "note": "La soglia e' un'esenzione, NON una franchigia: superati i 23.000 EUR di imponibile l'aliquota si applica sull'intero importo. Al 2026 il Comune non ha deliberato nuove aliquote: resta in vigore la delibera precedente."
+    "note": "La soglia è un'esenzione, NON una franchigia: superati i 23.000 EUR di imponibile l'aliquota si applica sull'intero importo. Al 2026 il Comune non ha deliberato nuove aliquote: resta in vigore la delibera precedente."
   },
 
   "inps-ivs-dipendente": {
@@ -87,13 +87,13 @@
     "affidabilita": "secondaria",
     "dataVerifica": "2026-09-11",
     "validoPerAnnoImposta": 2026,
-    "note": "L'aliquota viene rideterminata ogni anno con circolare INPS: e' il parametro piu' volatile del modello."
+    "note": "L'aliquota viene rideterminata ogni anno con circolare INPS: è il parametro più volatile del modello."
   },
 
   "regime-forfettario": {
-    "titolo": "Regime forfettario — imposta sostitutiva e coefficienti di redditivita'",
+    "titolo": "Regime forfettario — imposta sostitutiva e coefficienti di redditività",
     "ente": "Normativa nazionale",
-    "riferimentoNormativo": "L. 190/2014 art. 1 co. 54-89 e Allegato 4; imposta sostitutiva 15% (5% nei primi 5 anni di nuova attivita'); soglia ricavi 85.000 EUR",
+    "riferimentoNormativo": "L. 190/2014 art. 1 co. 54-89 e Allegato 4; imposta sostitutiva 15% (5% nei primi 5 anni di nuova attività); soglia ricavi 85.000 EUR",
     "url": "https://www.lavoro.gov.it/notizie/pagine/legge-di-bilancio-2026-le-principali-misure-lavoratori-imprese-e-famiglie",
     "affidabilita": "secondaria",
     "dataVerifica": "2026-09-11",
