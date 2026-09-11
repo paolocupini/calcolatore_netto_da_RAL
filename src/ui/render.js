@@ -115,7 +115,10 @@ function select(id, campo, opzioni, predefinito) {
 /* ------------------------------------------------------------- risultato */
 
 export function renderRisultato(esito) {
-  return `<section class="risultato" aria-live="polite">
+  // Niente aria-live qui: una live region creata nello stesso istante del suo
+  // contenuto non viene annunciata in modo affidabile. Sta sul contenitore
+  // #esito, gia' presente nel DOM prima del calcolo (vedi montaForm in app.js).
+  return `<section class="risultato">
     ${renderTesta(esito)}
     ${renderStriscia(esito)}
     ${avvisoSoglia(esito)}
@@ -127,13 +130,21 @@ function renderTesta(esito) {
   const r = esito.risultato;
   const media = r.lordoAnnuo > 0 ? percentuale(r.aliquotaMediaEffettiva) : "—";
 
+  // Il regime forfettario non ha mensilita' (lo dice la sua stessa scheda di
+  // semplificazioni): il discriminante e' la presenza di irpefLorda nella catena,
+  // lo stesso segnale gia' usato da renderCatena per scegliere il motore.
+  const haMensilita = Boolean(esito.voci.irpefLorda);
+  const etichettaMensile = haMensilita
+    ? `Netto mensile <small>su ${esc(r.mensilita)} mensilità</small>`
+    : "Netto mensile";
+
   return `<div class="testa">
     <p class="testa__voce">
       <span class="testa__etichetta">Netto annuo</span>
       <strong class="testa__cifra">${euro(r.nettoAnnuo)}</strong>
     </p>
     <p class="testa__voce">
-      <span class="testa__etichetta">Netto mensile <small>su ${esc(r.mensilita)} mensilità</small></span>
+      <span class="testa__etichetta">${etichettaMensile}</span>
       <strong class="testa__cifra">${euro(r.nettoMensile)}</strong>
     </p>
     <p class="testa__media">Aliquota media effettiva ${media}</p>

@@ -75,7 +75,7 @@ function montaForm() {
       <div id="campi" class="campi"></div>
       <button type="submit" class="calcola">Calcola</button>
     </form>
-    <div id="esito"></div>`;
+    <div id="esito" aria-live="polite"></div>`;
 
   el.form = document.querySelector("#calcolo");
   el.profili = document.querySelector("#scelta-profilo");
@@ -122,8 +122,10 @@ function esegui() {
       continue;
     }
 
+    // input type="number": il browser azzera .value a "" se l'utente digita una
+    // virgola, quindi qui non arriva mai testo con virgola decimale da convertire.
     const grezzo = controllo.value.trim();
-    const numerico = Number(grezzo.replace(",", "."));
+    const numerico = Number(grezzo);
 
     if (grezzo === "" || !Number.isFinite(numerico) || numerico < 0) {
       mostraErrore(
