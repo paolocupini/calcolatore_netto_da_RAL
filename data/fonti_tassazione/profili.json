@@ -1,0 +1,130 @@
+{
+  "_descrizione": "Ogni profilo dichiara quale motore usare, quali input chiedere all'utente e quali regole di regole-fiscali-2026.json applicare. Aggiungere un profilo non richiede modifiche al motore se riusa un 'motore' esistente.",
+
+  "profili": [
+    {
+      "id": "dipendente-indeterminato",
+      "nome": "Dipendente a tempo indeterminato",
+      "descrizione": "Impiegato assunto a tempo indeterminato, residente a Milano, senza agevolazioni particolari.",
+      "motore": "dipendente",
+      "predefinito": true,
+      "input": [
+        {
+          "id": "lordoAnnuo",
+          "etichetta": "RAL (Retribuzione Annua Lorda)",
+          "tipo": "valuta",
+          "min": 0,
+          "max": 500000,
+          "predefinito": 35000,
+          "obbligatorio": true
+        },
+        {
+          "id": "mensilita",
+          "etichetta": "Numero di mensilita'",
+          "tipo": "scelta",
+          "opzioni": [12, 13, 14],
+          "predefinito": 13,
+          "obbligatorio": true
+        }
+      ],
+      "regole": {
+        "contributi": "inps-dipendente-ordinario",
+        "impostaPrincipale": "irpef-nazionale",
+        "detrazioni": ["lavoro-dipendente-art13", "ulteriore-detrazione-cuneo"],
+        "addizionali": ["addizionale-regionale-lombardia", "addizionale-comunale-milano"]
+      },
+      "semplificazioni": [
+        "Nessun carico familiare e nessuna detrazione per oneri (spese sanitarie, mutuo, ecc.).",
+        "Rapporto di lavoro per l'intero anno: le detrazioni non sono ragguagliate ai giorni lavorati.",
+        "Non si applica il contributo aggiuntivo IVS dell'1% sulla quota eccedente il massimale.",
+        "Il TFR non e' incluso nel calcolo del netto: viene accantonato, non erogato in busta paga."
+      ]
+    },
+
+    {
+      "id": "apprendista",
+      "nome": "Apprendista (contratto di apprendistato)",
+      "descrizione": "Apprendistato professionalizzante in azienda con piu' di 9 dipendenti, residente a Milano.",
+      "motore": "dipendente",
+      "predefinito": false,
+      "input": [
+        {
+          "id": "lordoAnnuo",
+          "etichetta": "RAL (Retribuzione Annua Lorda)",
+          "tipo": "valuta",
+          "min": 0,
+          "max": 500000,
+          "predefinito": 24000,
+          "obbligatorio": true
+        },
+        {
+          "id": "mensilita",
+          "etichetta": "Numero di mensilita'",
+          "tipo": "scelta",
+          "opzioni": [12, 13, 14],
+          "predefinito": 13,
+          "obbligatorio": true
+        }
+      ],
+      "regole": {
+        "contributi": "inps-apprendista",
+        "impostaPrincipale": "irpef-nazionale",
+        "detrazioni": ["lavoro-dipendente-art13", "ulteriore-detrazione-cuneo"],
+        "addizionali": ["addizionale-regionale-lombardia", "addizionale-comunale-milano"]
+      },
+      "semplificazioni": [
+        "Stesso motore del tempo indeterminato: cambia solo l'aliquota contributiva a carico del lavoratore (5,84% invece di 9,19%).",
+        "Si assume azienda con piu' di 9 dipendenti e periodo formativo in corso.",
+        "Non si modella il sottoinquadramento retributivo previsto dai CCNL: la RAL e' un input dell'utente.",
+        "Valgono le stesse semplificazioni del profilo a tempo indeterminato."
+      ]
+    },
+
+    {
+      "id": "forfettario",
+      "nome": "Partita IVA in regime forfettario",
+      "descrizione": "Libero professionista individuale iscritto alla Gestione Separata INPS, in regime forfettario.",
+      "motore": "forfettario",
+      "predefinito": false,
+      "input": [
+        {
+          "id": "lordoAnnuo",
+          "etichetta": "Compensi annui lordi (fatturato)",
+          "tipo": "valuta",
+          "min": 0,
+          "max": 85000,
+          "predefinito": 40000,
+          "obbligatorio": true
+        },
+        {
+          "id": "coefficiente",
+          "etichetta": "Tipo di attivita' (coefficiente di redditivita')",
+          "tipo": "scelta-da-parametro",
+          "parametro": "coefficientiRedditivita",
+          "obbligatorio": true
+        },
+        {
+          "id": "aliquotaSostitutiva",
+          "etichetta": "Aliquota imposta sostitutiva",
+          "tipo": "scelta-da-imposta",
+          "imposta": "imposta-sostitutiva-forfettario",
+          "obbligatorio": true
+        }
+      ],
+      "regole": {
+        "contributi": "inps-gestione-separata",
+        "impostaPrincipale": "imposta-sostitutiva-forfettario",
+        "detrazioni": [],
+        "addizionali": []
+      },
+      "semplificazioni": [
+        "Regime strutturalmente diverso: l'imposta sostitutiva rimpiazza IRPEF e addizionali regionali/comunali.",
+        "Il reddito imponibile e' forfettizzato tramite coefficiente ATECO, non calcolato sui costi reali.",
+        "Si assume Gestione Separata INPS: non sono modellate le casse professionali (Forense, ENPAM, Inarcassa...).",
+        "Non si verificano le cause ostative all'accesso al regime ne' il superamento della soglia di 85.000 EUR.",
+        "Non sono modellati acconti e saldi: il calcolo e' su competenza annua.",
+        "Il 'netto' e' il reddito disponibile annuo, non un netto in busta paga: non esistono mensilita'."
+      ]
+    }
+  ]
+}

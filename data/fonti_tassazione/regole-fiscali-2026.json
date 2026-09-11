@@ -1,0 +1,157 @@
+{
+  "_descrizione": "Regole fiscali e contributive in forma dichiarativa. Nessuna logica qui dentro: il motore in src/motore interpreta i 'tipo' definiti sotto. Per aggiornare all'anno successivo si duplica questo file, non si tocca il codice.",
+  "meta": {
+    "annoImposta": 2026,
+    "dataUltimaVerifica": "2026-09-11",
+    "valuta": "EUR",
+    "ambitoTerritoriale": "Milano (Lombardia)"
+  },
+
+  "contributi": {
+    "inps-dipendente-ordinario": {
+      "etichetta": "Contributi INPS (IVS) a carico del lavoratore",
+      "tipo": "aliquota-piatta",
+      "aliquota": 0.0919,
+      "baseDiCalcolo": "retribuzione-lorda",
+      "deducibile": true,
+      "fonteId": "inps-ivs-dipendente"
+    },
+    "inps-apprendista": {
+      "etichetta": "Contributi INPS a carico dell'apprendista (aliquota agevolata)",
+      "tipo": "aliquota-piatta",
+      "aliquota": 0.0584,
+      "baseDiCalcolo": "retribuzione-lorda",
+      "deducibile": true,
+      "fonteId": "inps-apprendistato"
+    },
+    "inps-gestione-separata": {
+      "etichetta": "Contributi INPS Gestione Separata",
+      "tipo": "aliquota-piatta",
+      "aliquota": 0.2607,
+      "baseDiCalcolo": "reddito-forfettario",
+      "deducibile": true,
+      "fonteId": "inps-gestione-separata"
+    }
+  },
+
+  "imposte": {
+    "irpef-nazionale": {
+      "etichetta": "IRPEF lorda",
+      "tipo": "scaglioni",
+      "scaglioni": [
+        { "da": 0, "a": 28000, "aliquota": 0.23 },
+        { "da": 28000, "a": 50000, "aliquota": 0.33 },
+        { "da": 50000, "a": null, "aliquota": 0.43 }
+      ],
+      "fonteId": "irpef-2026"
+    },
+    "addizionale-regionale-lombardia": {
+      "etichetta": "Addizionale regionale IRPEF (Lombardia)",
+      "tipo": "scaglioni",
+      "scaglioni": [
+        { "da": 0, "a": 15000, "aliquota": 0.0123 },
+        { "da": 15000, "a": 28000, "aliquota": 0.0158 },
+        { "da": 28000, "a": 50000, "aliquota": 0.0172 },
+        { "da": 50000, "a": null, "aliquota": 0.0173 }
+      ],
+      "fonteId": "addizionale-regionale-lombardia"
+    },
+    "addizionale-comunale-milano": {
+      "etichetta": "Addizionale comunale IRPEF (Milano)",
+      "tipo": "aliquota-piatta-con-esenzione",
+      "aliquota": 0.008,
+      "sogliaEsenzione": 23000,
+      "esenzioneEFranchigia": false,
+      "fonteId": "addizionale-comunale-milano"
+    },
+    "imposta-sostitutiva-forfettario": {
+      "etichetta": "Imposta sostitutiva regime forfettario",
+      "tipo": "aliquota-piatta-a-scelta",
+      "opzioni": {
+        "ordinaria": { "etichetta": "Aliquota ordinaria (15%)", "aliquota": 0.15 },
+        "startup": { "etichetta": "Nuova attivita' - primi 5 anni (5%)", "aliquota": 0.05 }
+      },
+      "predefinita": "ordinaria",
+      "sostituisce": ["irpef-nazionale", "addizionale-regionale-lombardia", "addizionale-comunale-milano"],
+      "fonteId": "regime-forfettario"
+    }
+  },
+
+  "detrazioni": {
+    "lavoro-dipendente-art13": {
+      "etichetta": "Detrazione per lavoro dipendente (art. 13 TUIR)",
+      "tipo": "fasce-con-formula",
+      "fasce": [
+        {
+          "da": 0,
+          "a": 15000,
+          "formula": "costante",
+          "importo": 1955,
+          "importoMinimo": 690,
+          "importoMinimoTempoDeterminato": 1380
+        },
+        {
+          "da": 15000,
+          "a": 28000,
+          "formula": "base-piu-quota-decrescente",
+          "base": 1910,
+          "quotaVariabile": 1190,
+          "redditoRiferimento": 28000,
+          "divisore": 13000
+        },
+        {
+          "da": 28000,
+          "a": 50000,
+          "formula": "base-decrescente",
+          "base": 1910,
+          "redditoRiferimento": 50000,
+          "divisore": 22000
+        },
+        {
+          "da": 50000,
+          "a": null,
+          "formula": "costante",
+          "importo": 0
+        }
+      ],
+      "fonteId": "detrazione-art13-tuir"
+    },
+    "ulteriore-detrazione-cuneo": {
+      "etichetta": "Ulteriore detrazione (taglio del cuneo fiscale)",
+      "tipo": "fasce-con-formula",
+      "fasce": [
+        { "da": 0, "a": 20000, "formula": "costante", "importo": 0 },
+        { "da": 20000, "a": 32000, "formula": "costante", "importo": 1000 },
+        {
+          "da": 32000,
+          "a": 40000,
+          "formula": "base-decrescente",
+          "base": 1000,
+          "redditoRiferimento": 40000,
+          "divisore": 8000
+        },
+        { "da": 40000, "a": null, "formula": "costante", "importo": 0 }
+      ],
+      "fonteId": "cuneo-fiscale-2026"
+    }
+  },
+
+  "parametri": {
+    "coefficientiRedditivita": {
+      "etichetta": "Coefficiente di redditivita' (Allegato 4, L. 190/2014)",
+      "opzioni": {
+        "professionale-78": { "etichetta": "Attivita' professionali / intellettuali", "coefficiente": 0.78 },
+        "commercio-40": { "etichetta": "Commercio al dettaglio / ristorazione", "coefficiente": 0.40 },
+        "intermediari-62": { "etichetta": "Intermediari del commercio", "coefficiente": 0.62 }
+      },
+      "predefinita": "professionale-78",
+      "fonteId": "regime-forfettario"
+    },
+    "sogliaRicaviForfettario": {
+      "valore": 85000,
+      "fonteId": "regime-forfettario"
+    },
+    "mensilitaDisponibili": [12, 13, 14],
+    "mensilitaPredefinita": 13
+  }
+}
