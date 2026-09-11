@@ -1,5 +1,5 @@
 {
-  "_descrizione": "Ogni profilo dichiara quale motore usare, quali input chiedere all'utente e quali regole di regole-fiscali-2026.json applicare. Aggiungere un profilo non richiede modifiche al motore se riusa un 'motore' esistente.",
+  "_descrizione": "Ogni profilo dichiara quale motore usare, quali input chiedere all'utente e quali regole di regole-fiscali-2026.json applicare. Aggiungere un profilo non richiede modifiche al motore se riusa un 'motore' esistente. Su un input di tipo 'valuta', il flag 'superabile: true' dichiara che il 'max' è una soglia che l'utente può scegliere consapevolmente di superare: il form non rifiuta il valore, ed è il motore di calcolo a segnalarne la conseguenza nel risultato. Senza questo flag, 'max' è un limite rigido che il form deve far rispettare.",
 
   "profili": [
     {
@@ -20,7 +20,7 @@
         },
         {
           "id": "mensilita",
-          "etichetta": "Numero di mensilita'",
+          "etichetta": "Numero di mensilità",
           "tipo": "scelta",
           "opzioni": [12, 13, 14],
           "predefinito": 13,
@@ -37,14 +37,14 @@
         "Nessun carico familiare e nessuna detrazione per oneri (spese sanitarie, mutuo, ecc.).",
         "Rapporto di lavoro per l'intero anno: le detrazioni non sono ragguagliate ai giorni lavorati.",
         "Non si applica il contributo aggiuntivo IVS dell'1% sulla quota eccedente il massimale.",
-        "Il TFR non e' incluso nel calcolo del netto: viene accantonato, non erogato in busta paga."
+        "Il TFR non è incluso nel calcolo del netto: viene accantonato, non erogato in busta paga."
       ]
     },
 
     {
       "id": "apprendista",
       "nome": "Apprendista (contratto di apprendistato)",
-      "descrizione": "Apprendistato professionalizzante in azienda con piu' di 9 dipendenti, residente a Milano.",
+      "descrizione": "Apprendistato professionalizzante in azienda con più di 9 dipendenti, residente a Milano.",
       "motore": "dipendente",
       "predefinito": false,
       "input": [
@@ -59,7 +59,7 @@
         },
         {
           "id": "mensilita",
-          "etichetta": "Numero di mensilita'",
+          "etichetta": "Numero di mensilità",
           "tipo": "scelta",
           "opzioni": [12, 13, 14],
           "predefinito": 13,
@@ -74,8 +74,8 @@
       },
       "semplificazioni": [
         "Stesso motore del tempo indeterminato: cambia solo l'aliquota contributiva a carico del lavoratore (5,84% invece di 9,19%).",
-        "Si assume azienda con piu' di 9 dipendenti e periodo formativo in corso.",
-        "Non si modella il sottoinquadramento retributivo previsto dai CCNL: la RAL e' un input dell'utente.",
+        "Si assume azienda con più di 9 dipendenti e periodo formativo in corso.",
+        "Non si modella il sottoinquadramento retributivo previsto dai CCNL: la RAL è un input dell'utente.",
         "Valgono le stesse semplificazioni del profilo a tempo indeterminato."
       ]
     },
@@ -93,12 +93,13 @@
           "tipo": "valuta",
           "min": 0,
           "max": 85000,
+          "superabile": true,
           "predefinito": 40000,
           "obbligatorio": true
         },
         {
           "id": "coefficiente",
-          "etichetta": "Tipo di attivita' (coefficiente di redditivita')",
+          "etichetta": "Tipo di attività (coefficiente di redditività)",
           "tipo": "scelta-da-parametro",
           "parametro": "coefficientiRedditivita",
           "obbligatorio": true
@@ -119,11 +120,11 @@
       },
       "semplificazioni": [
         "Regime strutturalmente diverso: l'imposta sostitutiva rimpiazza IRPEF e addizionali regionali/comunali.",
-        "Il reddito imponibile e' forfettizzato tramite coefficiente ATECO, non calcolato sui costi reali.",
+        "Il reddito imponibile è forfettizzato tramite coefficiente ATECO, non calcolato sui costi reali.",
         "Si assume Gestione Separata INPS: non sono modellate le casse professionali (Forense, ENPAM, Inarcassa...).",
-        "Non si verificano le cause ostative all'accesso al regime ne' il superamento della soglia di 85.000 EUR.",
-        "Non sono modellati acconti e saldi: il calcolo e' su competenza annua.",
-        "Il 'netto' e' il reddito disponibile annuo, non un netto in busta paga: non esistono mensilita'."
+        "Non si verificano le cause ostative all'accesso al regime né il superamento della soglia di 85.000 EUR.",
+        "Non sono modellati acconti e saldi: il calcolo è su competenza annua.",
+        "Il 'netto' è il reddito disponibile annuo, non un netto in busta paga: non esistono mensilità."
       ]
     }
   ]

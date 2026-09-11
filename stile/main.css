@@ -1,0 +1,535 @@
+/*
+ * Il soggetto e' un documento fiscale: una catena di sottrazioni verificabili.
+ * La qualita' che la pagina deve avere e' la verificabilita' — ogni numero deve
+ * sembrare controllabile, non asserito.
+ *
+ * Da qui discendono le scelte: nessun box e nessuna ombra, la struttura e' fatta
+ * di filetti e spazio bianco; tutti gli importi su un unico asse decimale con
+ * cifre tabulari; i subtotali separati dalle trattenute da un filetto, perche'
+ * un passaggio intermedio non e' una trattenuta.
+ */
+
+:root {
+  --carta: #fbfbf9;
+  --inchiostro: #16181c;
+  --inchiostro-tenue: #5c626b;
+  --riga: #d8d6d0;
+  --trattenuta: #8c2f1e;
+  --credito: #1f5a3d;
+
+  --colonna: 52rem;
+  --passo: 0.75rem;
+
+  --testo: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --carta: #16181c;
+    --inchiostro: #f2f1ee;
+    --inchiostro-tenue: #9aa0a8;
+    --riga: #343841;
+    --trattenuta: #e2836f;
+    --credito: #6fbd92;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  padding: calc(var(--passo) * 4) var(--passo) calc(var(--passo) * 8);
+  background: var(--carta);
+  color: var(--inchiostro);
+  font-family: var(--testo);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+:where(header, main, footer) {
+  max-width: var(--colonna);
+  margin-inline: auto;
+}
+
+:focus-visible {
+  outline: 2px solid var(--inchiostro);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------- intestazione */
+
+.intestazione h1 {
+  margin: 0 0 calc(var(--passo) * 0.5);
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.intestazione__sottotitolo {
+  margin: 0 0 calc(var(--passo) * 3);
+  color: var(--inchiostro-tenue);
+  max-width: 46ch;
+}
+
+/* ---------------------------------------------------------------- form */
+
+.profili {
+  border: 0;
+  border-top: 1px solid var(--riga);
+  margin: 0 0 calc(var(--passo) * 2);
+  padding: calc(var(--passo) * 1.5) 0 0;
+}
+
+.profili legend {
+  padding: 0 0.6em 0 0;
+  font-size: 0.85rem;
+  color: var(--inchiostro-tenue);
+}
+
+.profilo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 0.7em;
+  align-items: baseline;
+  padding: calc(var(--passo) * 0.6) 0;
+  cursor: pointer;
+}
+
+.profilo__nome {
+  font-weight: 550;
+}
+
+.profilo__descrizione {
+  grid-column: 2;
+  color: var(--inchiostro-tenue);
+  font-size: 0.88rem;
+}
+
+.campi {
+  display: grid;
+  gap: calc(var(--passo) * 1.5);
+  margin-bottom: calc(var(--passo) * 2);
+}
+
+.campo label {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--inchiostro-tenue);
+  margin-bottom: 0.3em;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  max-width: 22rem;
+  padding: 0.5em 0.6em;
+  border: 1px solid var(--riga);
+  border-radius: 2px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.campo__aiuto {
+  margin: 0.3em 0 0;
+  font-size: 0.8rem;
+  color: var(--inchiostro-tenue);
+}
+
+.campo__errore {
+  margin: 0.3em 0 0;
+  font-size: 0.85rem;
+  color: var(--trattenuta);
+}
+
+.campo [aria-invalid="true"] {
+  border-color: var(--trattenuta);
+}
+
+.calcola {
+  padding: 0.6em 1.6em;
+  border: 1px solid var(--inchiostro);
+  border-radius: 2px;
+  background: var(--inchiostro);
+  color: var(--carta);
+  font: inherit;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.calcola:hover {
+  background: transparent;
+  color: var(--inchiostro);
+}
+
+/* ------------------------------------------------------------ risultato */
+
+.risultato {
+  margin-top: calc(var(--passo) * 4);
+  border-top: 1px solid var(--riga);
+  padding-top: calc(var(--passo) * 2);
+}
+
+.testa {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--passo) * 3);
+  align-items: flex-end;
+}
+
+.testa__voce {
+  margin: 0;
+  display: grid;
+}
+
+.testa__etichetta {
+  font-size: 0.85rem;
+  color: var(--inchiostro-tenue);
+}
+
+.testa__cifra {
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--credito);
+}
+
+.testa__voce:nth-child(2) .testa__cifra {
+  font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+  color: var(--inchiostro);
+}
+
+.testa__media {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--inchiostro-tenue);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------- striscia */
+
+.striscia-blocco {
+  margin: calc(var(--passo) * 2) 0;
+}
+
+.striscia {
+  display: flex;
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 1px;
+}
+
+.striscia__segmento {
+  width: var(--quota);
+}
+
+.striscia__netto,
+.striscia__pallino.striscia__netto {
+  background: var(--credito);
+}
+
+.striscia__contributi,
+.striscia__pallino.striscia__contributi {
+  background: var(--inchiostro-tenue);
+}
+
+.striscia__imposte,
+.striscia__pallino.striscia__imposte {
+  background: var(--trattenuta);
+}
+
+.striscia__legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 calc(var(--passo) * 2);
+  margin: calc(var(--passo) * 0.75) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.striscia__pallino {
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  margin-right: 0.4em;
+  border-radius: 50%;
+}
+
+.striscia__quota {
+  color: var(--inchiostro-tenue);
+}
+
+/* ----------------------------------------------------------- la catena */
+
+.catena {
+  width: 100%;
+  margin-top: calc(var(--passo) * 2);
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.catena caption {
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--inchiostro-tenue);
+  padding-bottom: calc(var(--passo) * 0.75);
+}
+
+.riga th {
+  text-align: left;
+  font-weight: 400;
+  padding: 0.42em 0;
+  vertical-align: top;
+}
+
+.riga__importo {
+  text-align: right;
+  padding: 0.42em 0;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.riga__nota {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--inchiostro-tenue);
+}
+
+.riga--trattenuta .riga__importo {
+  color: var(--trattenuta);
+}
+
+.riga--credito .riga__importo {
+  color: var(--credito);
+}
+
+.riga--rientro th {
+  padding-left: 1.5em;
+  color: var(--inchiostro-tenue);
+}
+
+.riga--esente .riga__importo {
+  color: var(--inchiostro-tenue);
+}
+
+/* Un subtotale non e' una trattenuta: il filetto lo separa da cio' che lo precede. */
+.riga--subtotale th,
+.riga--subtotale .riga__importo {
+  border-top: 1px solid var(--riga);
+  font-weight: 550;
+}
+
+.riga--totale th,
+.riga--totale .riga__importo {
+  border-top: 3px double var(--riga);
+  padding-top: 0.6em;
+  font-weight: 650;
+  font-size: 1.05rem;
+}
+
+.riga--lordo th,
+.riga--lordo .riga__importo {
+  font-weight: 550;
+}
+
+/* --------------------------------------------------------- scaglioni */
+
+.scaglioni {
+  margin-top: 0.4em;
+  font-size: 0.85rem;
+}
+
+.scaglioni summary {
+  color: var(--inchiostro-tenue);
+  cursor: pointer;
+}
+
+.scaglioni table {
+  width: 100%;
+  margin-top: 0.5em;
+  border-collapse: collapse;
+}
+
+.scaglioni th,
+.scaglioni td {
+  padding: 0.3em 0.8em 0.3em 0;
+  text-align: left;
+  font-weight: 400;
+  color: var(--inchiostro-tenue);
+  border-bottom: 1px solid var(--riga);
+}
+
+.scaglioni th {
+  font-size: 0.78rem;
+}
+
+.scaglioni .cifra {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------ avvisi, errori, fonti */
+
+.avviso {
+  margin: calc(var(--passo) * 1.5) 0;
+  padding-left: 0.8em;
+  border-left: 3px solid var(--trattenuta);
+  color: var(--inchiostro-tenue);
+  font-size: 0.9rem;
+}
+
+.errore {
+  border-top: 1px solid var(--riga);
+  padding-top: calc(var(--passo) * 2);
+}
+
+.errore h2 {
+  font-size: 1.1rem;
+  margin-top: 0;
+}
+
+.errore code,
+.errore pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+}
+
+.errore pre {
+  padding: 0.8em;
+  border: 1px solid var(--riga);
+  border-radius: 2px;
+  overflow-x: auto;
+}
+
+.semplificazioni,
+.fonti {
+  margin-top: calc(var(--passo) * 4);
+  border-top: 1px solid var(--riga);
+  padding-top: calc(var(--passo) * 1.5);
+}
+
+.semplificazioni h2,
+.fonti h2 {
+  font-size: 0.85rem;
+  font-weight: 550;
+  color: var(--inchiostro-tenue);
+  margin: 0 0 calc(var(--passo) * 0.75);
+}
+
+.semplificazioni ul {
+  margin: 0;
+  padding-left: 1.1em;
+  color: var(--inchiostro-tenue);
+  font-size: 0.9rem;
+}
+
+.semplificazioni li {
+  margin-bottom: 0.35em;
+}
+
+.fonti__meta {
+  margin: 0 0 calc(var(--passo));
+  font-size: 0.85rem;
+  color: var(--inchiostro-tenue);
+}
+
+.fonti__elenco {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fonte {
+  display: grid;
+  gap: 0.15em;
+  padding: calc(var(--passo)) 0;
+  border-top: 1px solid var(--riga);
+  font-size: 0.85rem;
+}
+
+.fonte__titolo {
+  color: inherit;
+  font-weight: 550;
+}
+
+.fonte__ente,
+.fonte__norma,
+.fonte__badge,
+.fonte__note {
+  color: var(--inchiostro-tenue);
+}
+
+.fonte__norma,
+.fonte__note {
+  font-size: 0.95em;
+}
+
+.fonte--secondaria .fonte__badge,
+.fonte--mancante {
+  color: var(--trattenuta);
+}
+
+.fonte--scaduta {
+  border-left: 3px solid var(--trattenuta);
+  padding-left: 0.8em;
+}
+
+.fonte--scaduta .fonte__badge {
+  color: var(--trattenuta);
+}
+
+/* ------------------------------------------------------------- footer */
+
+.pie {
+  margin-top: calc(var(--passo) * 5);
+  border-top: 1px solid var(--riga);
+  padding-top: calc(var(--passo) * 1.5);
+  font-size: 0.82rem;
+  color: var(--inchiostro-tenue);
+}
+
+.caricamento {
+  color: var(--inchiostro-tenue);
+}
+
+/* ------------------------------------------------------------- mobile */
+
+@media (max-width: 34rem) {
+  .testa {
+    gap: calc(var(--passo) * 1.5);
+  }
+
+  .riga th {
+    padding-right: 0.6em;
+  }
+
+  .scaglioni table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* Nessuna animazione di entrata e nessuna transizione, per scelta: la regola resta come rete di sicurezza. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
