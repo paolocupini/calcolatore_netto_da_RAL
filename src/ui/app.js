@@ -129,7 +129,7 @@ function esegui() {
       mostraErrore(
         controllo,
         messaggio,
-        `Inserisci ${campo.etichetta.toLowerCase()}: un numero maggiore o uguale a zero.`
+        `Inserisci ${campo.etichetta}: un numero maggiore o uguale a zero.`
       );
       primoNonValido = primoNonValido ?? controllo;
       continue;
