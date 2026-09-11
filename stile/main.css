@@ -483,6 +483,15 @@ body {
   color: var(--trattenuta);
 }
 
+.fonte--scaduta {
+  border-left: 3px solid var(--trattenuta);
+  padding-left: 0.8em;
+}
+
+.fonte--scaduta .fonte__badge {
+  color: var(--trattenuta);
+}
+
 /* ------------------------------------------------------------- footer */
 
 .pie {
@@ -514,7 +523,7 @@ body {
   }
 }
 
-/* Nessuna animazione di entrata per scelta: resta la sola transizione della striscia. */
+/* Nessuna animazione di entrata e nessuna transizione, per scelta: la regola resta come rete di sicurezza. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
