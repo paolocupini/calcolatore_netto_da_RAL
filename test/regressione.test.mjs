@@ -114,6 +114,44 @@ test("lordo a zero e' un risultato valido, non un errore", () => {
   assert.equal(e.risultato.aliquotaMediaEffettiva, 0);
 });
 
+test("ogni input dichiarato da un profilo viene davvero consumato, non silenziosamente sostituito da un default", () => {
+  // Ogni lettura dell'input nel motore e' difensiva (Number(x) || 0, x || predefinita...),
+  // quindi se l'id di un input dichiarato in profili.json venisse rinominato o scritto
+  // con un typo, il motore non lancerebbe alcun errore: ricadrebbe silenziosamente sul
+  // default e produrrebbe comunque una catena completa, plausibile e sbagliata, con tanto
+  // di fonti citate. Questo test non verifica l'aritmetica: verifica che ogni id dichiarato
+  // sia effettivamente quello letto, costruendo l'input dai soli id dichiarati dal profilo
+  // e controllando che esito.input li rispecchi esattamente.
+  for (const profilo of profili.profili) {
+    const input = {};
+    for (const campo of profilo.input) {
+      if (campo.tipo === "valuta") {
+        input[campo.id] = campo.predefinito;
+      } else if (campo.tipo === "scelta") {
+        input[campo.id] = campo.opzioni[0];
+      } else if (campo.tipo === "scelta-da-parametro") {
+        const parametro = regole.parametri[campo.parametro];
+        input[campo.id] = Object.keys(parametro.opzioni)[0];
+      } else if (campo.tipo === "scelta-da-imposta") {
+        const imposta = regole.imposte[campo.imposta];
+        input[campo.id] = Object.keys(imposta.opzioni)[0];
+      } else {
+        throw new Error(`Tipo di campo non gestito nel test: ${campo.tipo}`);
+      }
+    }
+
+    const e = esegui(profilo.id, input);
+
+    for (const campo of profilo.input) {
+      assert.equal(
+        e.input[campo.id],
+        input[campo.id],
+        `profilo ${profilo.id}: l'input '${campo.id}' non e' stato consumato com'era stato dichiarato (possibile default silenzioso)`
+      );
+    }
+  }
+});
+
 test("ogni voce del risultato risale a una fonte risolta", () => {
   const e = esegui("dipendente-indeterminato", { lordoAnnuo: 35000, mensilita: 13 });
 
