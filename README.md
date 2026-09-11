@@ -4,7 +4,7 @@ Calcolatore da retribuzione lorda a netto. Anno d'imposta **2026**, ambito
 **Milano (Lombardia)**. Ogni trattenuta è mostrata con il suo importo e con la
 fonte da cui il dato proviene.
 
-**Demo:** <!-- inserire qui l'URL di GitHub Pages dopo l'attivazione -->
+**Demo:** <https://paolocupini.github.io/calcolatore_netto_da_RAL/>
 
 ## Come farlo girare in locale
 
@@ -60,6 +60,11 @@ innescare l'aggiornamento annuale.
 
 ## Pubblicazione
 
-Settings → Pages → Source: *Deploy from a branch*, branch `master`, cartella
-`/ (root)`. I percorsi nelle `fetch` sono relativi, quindi funzionano anche
-quando il sito è servito da `/<repo>/`.
+La demo è pubblicata con GitHub Pages: Settings → Pages → Source *Deploy from a
+branch*, branch `master`, cartella `/ (root)`. Ogni push su `master` aggiorna il
+sito.
+
+Non c'è build step: i file vengono serviti così come sono nel repo, quindi il
+codice che si legge su GitHub è esattamente quello che gira nella demo. I
+percorsi nelle `fetch` sono relativi, ed è la ragione per cui il sito funziona
+servito da `/<repo>/` invece che dalla radice del dominio.
