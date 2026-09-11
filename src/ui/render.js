@@ -328,7 +328,135 @@ function righeForfettario(esito) {
   return righe;
 }
 
-// Sostituita dall'implementazione reale nel Task 5.
-function renderScaglioni() {
-  return "";
+/* ------------------------------------------------------------- scaglioni */
+
+export function renderScaglioni(dettaglio) {
+  if (!Array.isArray(dettaglio) || dettaglio.length === 0) return "";
+
+  const righe = dettaglio
+    .map(
+      (s) => `<tr>
+        <td>${esc(fasciaTestuale(s))}</td>
+        <td class="cifra">${aliquota(s.aliquota)}</td>
+        <td class="cifra">${euro(s.quotaTassata)}</td>
+        <td class="cifra">${euro(s.imposta)}</td>
+      </tr>`
+    )
+    .join("");
+
+  return `<details class="scaglioni">
+    <summary>Dettaglio per scaglione</summary>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Fascia di reddito</th>
+          <th scope="col">Aliquota</th>
+          <th scope="col">Quota tassata</th>
+          <th scope="col">Imposta</th>
+        </tr>
+      </thead>
+      <tbody>${righe}</tbody>
+    </table>
+  </details>`;
+}
+
+function fasciaTestuale(scaglione) {
+  if (scaglione.a === null) return `oltre ${numero(scaglione.da)} €`;
+  if (scaglione.da === 0) return `fino a ${numero(scaglione.a)} €`;
+  return `da ${numero(scaglione.da)} a ${numero(scaglione.a)} €`;
+}
+
+/* ----------------------------------------------------------------- fonti */
+
+export function renderFonti(meta) {
+  const scadute = meta.fontiUtilizzate.filter((f) => f.daRiverificare);
+
+  const avviso = scadute.length
+    ? `<p class="avviso" role="status">
+        ${scadute.length === 1 ? "Una fonte non è verificata" : `${scadute.length} fonti non sono verificate`}
+        da più di un anno: ${esc(
+          scadute.map((f) => `${f.titolo} (${f.giorniDallaVerifica} giorni)`).join("; ")
+        )}. I valori corrispondenti vanno ricontrollati prima di farci affidamento.
+      </p>`
+    : "";
+
+  return `<section class="fonti">
+    <h2>Fonti</h2>
+    <p class="fonti__meta">
+      Anno d'imposta ${esc(meta.annoImposta)} — ambito ${esc(meta.ambitoTerritoriale)}.
+      Ultima verifica dei dati: ${esc(meta.dataUltimaVerifica)}.
+    </p>
+    ${avviso}
+    <ul class="fonti__elenco">${meta.fontiUtilizzate.map(renderFonte).join("")}</ul>
+  </section>`;
+}
+
+function renderFonte(fonte) {
+  if (fonte.mancante) {
+    return `<li class="fonte fonte--mancante">Fonte non trovata nel registro: ${esc(fonte.id)}</li>`;
+  }
+
+  const secondaria = fonte.affidabilita === "secondaria";
+  const badge = secondaria
+    ? "◆ fonte secondaria — da riverificare prima di un uso reale"
+    : "● fonte primaria";
+
+  return `<li class="fonte${secondaria ? " fonte--secondaria" : ""}${
+    fonte.daRiverificare ? " fonte--scaduta" : ""
+  }">
+    <a class="fonte__titolo" href="${esc(fonte.url)}" target="_blank" rel="noopener noreferrer">${esc(
+    fonte.titolo
+  )}</a>
+    <span class="fonte__ente">${esc(fonte.ente)}</span>
+    <span class="fonte__norma">${esc(fonte.riferimentoNormativo)}</span>
+    <span class="fonte__badge">${badge} — verificata il ${esc(fonte.dataVerifica)}, scade il ${esc(
+    fonte.dataScadenzaVerifica
+  )}${fonte.daRiverificare ? " (scaduta)" : ""}</span>
+    ${fonte.note ? `<span class="fonte__note">${esc(fonte.note)}</span>` : ""}
+  </li>`;
+}
+
+/* -------------------------------------------------------- semplificazioni */
+
+export function renderSemplificazioni(profilo) {
+  return `<section class="semplificazioni">
+    <h2>Che cosa questo calcolo non considera</h2>
+    <p>${esc(profilo.descrizione)}</p>
+    <ul>${profilo.semplificazioni.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
+  </section>`;
+}
+
+/* ---------------------------------------------------------------- errori */
+
+export function renderErrore(tipo, dettaglio = {}) {
+  if (tipo === "protocollo") {
+    return `<section class="errore" role="alert">
+      <h2>Non riesco a caricare i dati fiscali</h2>
+      <p>
+        La pagina legge le regole fiscali da file JSON con <code>fetch()</code>,
+        che il browser blocca quando la pagina è aperta direttamente da disco
+        (indirizzo <code>file://</code>).
+      </p>
+      <p>Avvia un server locale nella cartella del progetto:</p>
+      <pre><code>python3 -m http.server 8000</code></pre>
+      <p>Poi apri <code>http://localhost:8000</code>.</p>
+    </section>`;
+  }
+
+  if (tipo === "risorsa") {
+    return `<section class="errore" role="alert">
+      <h2>Dati fiscali non raggiungibili</h2>
+      <p>
+        Il file <code>${esc(dettaglio.file ?? "sconosciuto")}</code> ha risposto
+        con HTTP ${esc(dettaglio.stato ?? "?")}. Controlla che la cartella
+        <code>data/</code> sia stata pubblicata e che i percorsi in
+        <code>app.js</code> siano relativi, non assoluti.
+      </p>
+    </section>`;
+  }
+
+  return `<section class="errore" role="alert">
+    <h2>Errore imprevisto</h2>
+    <p>${esc(dettaglio.messaggio ?? "Nessun dettaglio disponibile.")}</p>
+  </section>`;
 }
