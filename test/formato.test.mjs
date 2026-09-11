@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { euro, percentuale, aliquota, numero } from "../src/ui/formato.js";
+import { euro, percentuale, aliquota, numero, _getValutaOptions } from "../src/ui/formato.js";
 
 // Intl usa uno spazio unificatore (U+00A0 o U+202F) prima del simbolo di valuta.
 // E' corretto: lo normalizziamo per poter scrivere asserzioni leggibili.
@@ -41,4 +41,22 @@ test("i formattatori restituiscono un trattino sui valori non finiti", () => {
     assert.equal(f(Infinity), "—");
     assert.equal(f(undefined), "—");
   }
+});
+
+// Protezione dalla differenza CLDR tra Node e Chrome: Chrome omette il separatore
+// nei numeri a quattro cifre mentre Node lo include. Questa suite verifica che
+// useGrouping:"always" sia stato aggiunto a tutte le istanze NumberFormat, pinando
+// il comportamento coerente su entrambi i runtime. I due assiomi sotto sono
+// interdipendenti: uno controlla i valori, l'altro verifica l'intenzione nel codice.
+test("quattro cifre sono sempre raggruppate, verificando Node-vs-Chrome CLDR", () => {
+  // Assiomi sui valori: questi passano in Node anche senza useGrouping:"always",
+  // ma in Chrome fallirebbero senza di esso (perche' restituirebbero "1997,48 €" senza separatore).
+  assert.equal(norm(euro(1997.48)), "1.997,48 €");
+  assert.equal(norm(euro(3216.5)), "3.216,50 €");
+  assert.equal(norm(euro(9032.79)), "9.032,79 €");
+  assert.equal(numero(1000), "1.000");
+
+  // Assioma sull'intenzione: verifica che il formatter di valuta sia configurato con useGrouping:"always".
+  // Questo fallisce se l'opzione viene rimossa, anche in Node dove i valori passerebbero comunque.
+  assert.equal(_getValutaOptions().useGrouping, "always");
 });

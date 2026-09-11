@@ -10,14 +10,21 @@ const VALUTA = new Intl.NumberFormat("it-IT", {
   currency: "EUR",
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
+  // Chrome e Node hanno CLDR data diversi: Chrome omette il separatore nei numeri a quattro cifre.
+  // useGrouping:"always" fissa il comportamento su entrambi i runtime.
+  useGrouping: "always",
 });
 
 const DECIMALE = new Intl.NumberFormat("it-IT", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
+  useGrouping: "always",
 });
 
-const INTERO = new Intl.NumberFormat("it-IT", { maximumFractionDigits: 0 });
+const INTERO = new Intl.NumberFormat("it-IT", {
+  maximumFractionDigits: 0,
+  useGrouping: "always",
+});
 
 /** Importo in euro: 25967.21 -> "25.967,21 €" */
 export function euro(valore) {
@@ -41,4 +48,11 @@ export function aliquota(frazione) {
 export function numero(valore) {
   if (!Number.isFinite(valore)) return "—";
   return INTERO.format(valore);
+}
+
+// Per il test: esporta le opzioni risolte del formatter di valuta per verificare
+// che useGrouping:"always" sia configurato. Necessario per verificare il comportamento
+// coerente su Node e Chrome nonostante le differenze CLDR.
+export function _getValutaOptions() {
+  return VALUTA.resolvedOptions();
 }
