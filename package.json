@@ -1,0 +1,12 @@
+{
+  "name": "calcolatore-netto-da-ral",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Calcolatore RAL lordo → netto, anno d'imposta 2026, ambito Milano (Lombardia).",
+  "scripts": {
+    "test": "node --test test/",
+    "verifica": "node verifica.mjs",
+    "avvia": "python3 -m http.server 8000"
+  }
+}
