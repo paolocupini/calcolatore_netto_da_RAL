@@ -63,14 +63,19 @@ function suggerimento(campo) {
 
 function controllo(campo, regole, id) {
   switch (campo.tipo) {
-    case "valuta":
-      // min/max vanno in data-*, non negli attributi nativi: il forfettario deve
-      // poter superare la soglia e ricevere un avviso, non un submit bloccato.
+    case "valuta": {
+      // min/max vanno in data-*, non negli attributi nativi: il campo non deve
+      // mai bloccare il submit nativamente. data-superabile, quando il campo lo
+      // dichiara, dice ad app.js che il max e' una soglia che l'utente puo'
+      // scegliere consapevolmente di superare (e' il motore a segnalarne la
+      // conseguenza), non un limite che il form deve far rispettare.
+      const superabile = campo.superabile ? ` data-superabile="true"` : "";
       return `<input type="number" id="${id}" name="${esc(campo.id)}"
         inputmode="decimal" step="100"
-        data-min="${esc(campo.min)}" data-max="${esc(campo.max)}"
+        data-min="${esc(campo.min)}" data-max="${esc(campo.max)}"${superabile}
         value="${esc(campo.predefinito)}"
         aria-describedby="${id}-errore">`;
+    }
 
     case "scelta":
       return select(

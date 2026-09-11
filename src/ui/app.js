@@ -15,6 +15,7 @@ import {
   renderFonti,
   renderErrore,
 } from "./render.js";
+import { numero } from "./formato.js";
 
 // Percorsi relativi: su GitHub Pages il sito e' servito da /<repo>/, non dalla radice.
 const PERCORSI = [
@@ -127,11 +128,23 @@ function esegui() {
     const grezzo = controllo.value.trim();
     const numerico = Number(grezzo);
 
-    if (grezzo === "" || !Number.isFinite(numerico) || numerico < 0) {
+    // min/max/superabile vengono letti dagli attributi data-*, mai scritti qui:
+    // e' render.js, leggendo profili.json, a decidere quali sono i limiti di un
+    // campo. Un campo "superabile" dichiara che il suo max e' una soglia che
+    // l'utente puo' scegliere consapevolmente di superare (e' il motore, non il
+    // form, a segnalarne la conseguenza) — il forfettario deve poter ricevere
+    // 90.000 e mostrare comunque il calcolo con l'avviso.
+    const min = Number(controllo.dataset.min);
+    const max = Number(controllo.dataset.max);
+    const superabile = controllo.dataset.superabile === "true";
+    const fuoriRange =
+      !Number.isFinite(numerico) || numerico < min || (numerico > max && !superabile);
+
+    if (grezzo === "" || fuoriRange) {
       mostraErrore(
         controllo,
         messaggio,
-        `Inserisci ${campo.etichetta}: un numero maggiore o uguale a zero.`
+        `Inserisci ${campo.etichetta}: un numero tra ${numero(min)} e ${numero(max)}.`
       );
       primoNonValido = primoNonValido ?? controllo;
       continue;

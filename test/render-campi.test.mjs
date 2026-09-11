@@ -48,6 +48,20 @@ test("il campo valuta non porta attributi di validazione bloccanti", () => {
   assert.match(campo, /type="number"/);
 });
 
+test("solo il campo del forfettario dichiara la soglia superabile", () => {
+  // superabile viene da profili.json, non e' inferito qui: il forfettario puo'
+  // essere superato e il motore avvisa, i profili da dipendente hanno un max rigido.
+  const campoForfettario = renderCampi(profilo("forfettario"), regole).match(
+    /<input[^>]*name="lordoAnnuo"[^>]*>/
+  )[0];
+  assert.match(campoForfettario, /data-superabile="true"/);
+
+  for (const id of ["dipendente-indeterminato", "apprendista"]) {
+    const campo = renderCampi(profilo(id), regole).match(/<input[^>]*name="lordoAnnuo"[^>]*>/)[0];
+    assert.doesNotMatch(campo, /data-superabile/);
+  }
+});
+
 test("scelta-da-parametro legge le opzioni da regole.parametri", () => {
   const html = renderCampi(profilo("forfettario"), regole);
 
