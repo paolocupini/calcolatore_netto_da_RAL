@@ -1,4 +1,4 @@
-# Calcolatore RAL → Netto — UI Implementation Plan
+﻿# Calcolatore RAL → Netto — UI Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -320,7 +320,7 @@ import { euro, percentuale, aliquota, numero } from "../src/ui/formato.js";
 
 // Intl usa uno spazio unificatore (U+00A0 o U+202F) prima del simbolo di valuta.
 // E' corretto: lo normalizziamo per poter scrivere asserzioni leggibili.
-const norm = (s) => s.replace(/ | /g, " ");
+const norm = (s) => s.replace(/[\u00A0\u202F]/g, " ");
 
 test("euro formatta in stile italiano con due decimali", () => {
   assert.equal(norm(euro(25967.21)), "25.967,21 €");
@@ -582,7 +582,8 @@ Create `src/ui/render.js`:
  * serve a schermo, arriva dal risultato del motore o dai file JSON.
  */
 
-import { euro, percentuale, aliquota, numero } from "./formato.js";
+// Task 4 allarga questo import a { euro, percentuale, aliquota, numero }.
+import { numero } from "./formato.js";
 
 /** Escape del testo che proviene dai file dati (i campi note e riferimentoNormativo sono liberi). */
 function esc(testo) {
@@ -741,7 +742,7 @@ const profili = leggi("../data/profili.json");
 const fonti = leggi("../data/fonti.json");
 
 const esegui = (profiloId, input) => calcola({ profiloId, input, regole, profili, fonti });
-const norm = (s) => s.replace(/ | /g, " ");
+const norm = (s) => s.replace(/[\u00A0\u202F]/g, " ");
 
 const dipendente = () => esegui("dipendente-indeterminato", { lordoAnnuo: 35000, mensilita: 13 });
 const sottoSoglia = () => esegui("dipendente-indeterminato", { lordoAnnuo: 22000, mensilita: 13 });
@@ -892,7 +893,13 @@ Expected: FAIL with `renderRisultato is not a function` (the export does not exi
 
 - [ ] **Step 3: Write the implementation**
 
-Append to `src/ui/render.js`:
+First widen the existing import at the top of `src/ui/render.js` — Task 3 left it importing only what it used:
+
+```js
+import { euro, percentuale, aliquota, numero } from "./formato.js";
+```
+
+Then append:
 
 ```js
 /* ------------------------------------------------------------- risultato */
@@ -1186,7 +1193,7 @@ const esito = calcola({
   profili,
   fonti,
 });
-const norm = (s) => s.replace(/ | /g, " ");
+const norm = (s) => s.replace(/[\u00A0\u202F]/g, " ");
 
 test("il dettaglio degli scaglioni e' consultabile da tastiera senza JavaScript", () => {
   const html = renderScaglioni(esito.voci.irpefLorda.dettaglioScaglioni);
@@ -2484,3 +2491,4 @@ Design-doc coverage: §1 move → Task 1; §2 ledger → Task 4; §3 visual → 
 **Type consistency** — `renderScaglioni` is called in Task 4 and implemented in Task 5; Task 4 ships an explicit stub and Task 5 says to delete it, so neither task is left referring to something undefined. `esc` is defined once in Task 3 and used by Tasks 4 and 5, all in the same module. `renderSceltaProfilo` takes the whole parsed `profili.json` (with its `.profili` array) while `renderCampi` and `renderSemplificazioni` take a single profile object — this asymmetry is intentional and is stated in each Interfaces block.
 
 **Known gap, deliberate:** `app.js` has no automated tests. It is the impure boundary — fetch, DOM, events — and testing it would need a DOM implementation, which the zero-dependency constraint forbids. It is covered by the scripted browser walkthrough in Task 6 Step 4 and Task 8 Step 4. Everything testable without a DOM was pushed out of it into `render.js` precisely so this gap stays small.
+
