@@ -10,7 +10,7 @@ const profili = leggi("../data/profili.json");
 const fonti = leggi("../data/fonti.json");
 
 const esegui = (profiloId, input) => calcola({ profiloId, input, regole, profili, fonti });
-const norm = (s) => s.replace(/[  ]/g, " ");
+const norm = (s) => s.replace(/[\u00A0\u202F]/g, " ");
 
 const dipendente = () => esegui("dipendente-indeterminato", { lordoAnnuo: 35000, mensilita: 13 });
 const sottoSoglia = () => esegui("dipendente-indeterminato", { lordoAnnuo: 22000, mensilita: 13 });
@@ -29,9 +29,16 @@ test("i numeri di testa sono il netto annuo e il netto mensile", () => {
   assert.match(html, /25,81%/);
 });
 
-test("il risultato e' una regione annunciata agli screen reader", () => {
+test("il risultato non porta una propria live region", () => {
+  // La live region vive sul contenitore persistente #esito in app.js, creato una
+  // sola volta in montaForm() prima che il calcolo la riempia: e' quello a rendere
+  // affidabile l'annuncio per gli screen reader. Una sezione ricreata a ogni
+  // calcolo non deve dichiarare aria-live in proprio (altrimenti nascerebbe insieme
+  // al suo contenuto, che e' esattamente il difetto che questo test impedisce).
+  // Questo non puo' essere verificato da un test unitario su una funzione pura:
+  // qui controlliamo solo che renderRisultato non se ne appropri.
   const html = renderRisultato(dipendente());
-  assert.match(html, /aria-live="polite"/);
+  assert.doesNotMatch(html, /aria-live="polite"/);
 });
 
 test("la catena e' una tabella con intestazioni di riga vere", () => {

@@ -16,7 +16,7 @@ const esito = calcola({
   profili,
   fonti,
 });
-const norm = (s) => s.replace(/[  ]/g, " ");
+const norm = (s) => s.replace(/[\u00A0\u202F]/g, " ");
 
 test("il dettaglio degli scaglioni e' consultabile da tastiera senza JavaScript", () => {
   const html = renderScaglioni(esito.voci.irpefLorda.dettaglioScaglioni);
